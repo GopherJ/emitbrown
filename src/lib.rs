@@ -2,7 +2,7 @@ extern crate hashbrown;
 
 use hashbrown::HashMap;
 
-pub type EventData<T> = HashMap<String, T>;
+pub type EventData<T> = T;
 pub type EventCallback<'callback, T> = FnMut(&mut EventData<T>) -> () + 'callback;
 
 pub trait Events<'callback, T> {
