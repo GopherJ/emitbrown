@@ -1,0 +1,7 @@
+[package]
+name = "emitter-rs"
+version = "0.1.0"
+authors = ["Cheng JIANG <cheng.jiang@outlook.fr>"]
+edition = "2018"
+
+[dependencies]
