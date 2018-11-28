@@ -4,6 +4,8 @@ version = "0.1.0"
 authors = ["Cheng JIANG <cheng.jiang@outlook.fr>"]
 edition = "2018"
 description = "event emitter based on google swisstable"
+license = "MIT"
+license-file = "LICENSE.txt"
 
 [dependencies]
 hashbrown = "0.1"
