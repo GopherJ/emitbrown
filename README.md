@@ -1,6 +1,7 @@
 ## emitbrown
 
 This project is a fork of [RustyEmitter](https://github.com/kentaromiura/RustyEmitter) and it uses [hashbrown](https://github.com/Amanieu/hashbrown) to replace `std::collections::HashMap`.
+It has also some small api changes
 
 ## usage
 
@@ -11,19 +12,19 @@ extern crate hashbrown;
 use emitbrown::{Events, Emitter};
 use hashbrown::HashMap;
 
-fn main(){  
+fn main(){
     let (mut emitter, callback) = (
         // create a new emitter instance
         Emitter::new(),
 
-        // creating the handler in the same lifetime 
-        &mut |data:& mut HashMap<String, String>| { 
+        // creating the handler in the same lifetime
+        Box::new(|data:& mut HashMap<String, String>| {
             println!("IT WORKS!");
             for (key, value) in data {
                 println!("{}: {}", key, value);
             }
         }
-    );
+    ));
 
     // listen to the "IT WORKS" event
     emitter.on("IT WORKS".to_string(), callback);

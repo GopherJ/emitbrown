@@ -1,30 +1,27 @@
-extern crate hashbrown;
-
 use hashbrown::HashMap;
 
-pub type EventData<T> = T;
-pub type EventCallback<'callback, T> = FnMut(&mut EventData<T>) -> () + 'callback;
+pub type EventCallback<'callback, T> = dyn FnMut(&mut T) -> () + 'callback;
 
 pub trait Events<'callback, T> {
-    fn on(&mut self, event_name: String, callback: &'callback mut EventCallback<'callback, T>);
+    fn on(&mut self, event_name: String, callback: Box<EventCallback<'callback, T>>);
     fn off(&mut self, event_name: String);
-    fn emit(&mut self, event_name: String, event_data: &mut EventData<T>);
+    fn emit(&mut self, event_name: String, event_data: &mut T);
 }
 
 pub struct Emitter<'callback, T: 'callback> {
-    events: HashMap<String, Vec<&'callback mut EventCallback<'callback, T>>>
+    events: HashMap<String, Vec<Box<EventCallback<'callback, T>>>>,
 }
 
 impl<'callback, T> Emitter<'callback, T> {
     pub fn new() -> Emitter<'callback, T> {
         Emitter {
-            events: HashMap::new()
+            events: HashMap::new(),
         }
     }
 }
 
 impl<'callback, T> Events<'callback, T> for Emitter<'callback, T> {
-    fn on(&mut self, event_name: String, callback: &'callback mut EventCallback<'callback, T>) {
+    fn on(&mut self, event_name: String, callback: Box<EventCallback<'callback, T>>) {
         if self.events.contains_key(&event_name) {
             match self.events.get_mut(&event_name) {
                 Some(callbacks) => callbacks.push(callback),
@@ -40,14 +37,14 @@ impl<'callback, T> Events<'callback, T> for Emitter<'callback, T> {
         self.events.remove(&event_name);
     }
 
-    fn emit(&mut self, event_name: String, event_data: &mut EventData<T>) {
+    fn emit(&mut self, event_name: String, event_data: &mut T) {
         match self.events.get_mut(&event_name) {
             Some(callbacks) => {
                 for callback in callbacks.iter_mut() {
-                    (*callback)(event_data);
+                    callback(event_data);
                 }
             }
-            _ => { ; }
+            _ => {}
         }
     }
 }
