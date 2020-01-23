@@ -1,6 +1,6 @@
 use hashbrown::HashMap;
 
-pub type EventCallback<'callback, T> = Box<dyn FnMut(&mut T) -> () + 'callback + Send>;
+pub type EventCallback<'callback, T> = Box<dyn FnMut(&mut T) -> () + 'callback + Send + Sync>;
 
 pub trait Events<'callback, T> {
     fn on(&mut self, event_name: String, callback: EventCallback<'callback, T>);
