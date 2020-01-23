@@ -5,7 +5,7 @@ use hashbrown::HashMap;
 
 #[test]
 fn must_register_an_event_and_call_callback_passing_data() {
-    let (test, data_inside) = ("TEST".to_string(), "DATA INSIDE".to_string());
+    let (test, data_inside) = ("TEST".to_owned(), "DATA INSIDE".to_owned());
 
     let (mut emitter, callback) = (
         Emitter::new(),
@@ -21,11 +21,11 @@ fn must_register_an_event_and_call_callback_passing_data() {
         ),
     );
 
-    emitter.on(test.clone(), callback);
+    emitter.on(&test, callback);
 
     let mut data: HashMap<String, String> = HashMap::new();
     data.insert(test.clone(), data_inside.clone());
-    emitter.emit(test.clone(), &mut data);
+    emitter.emit(&test, &mut data);
 }
 
 #[test]
@@ -61,13 +61,13 @@ fn must_register_multiple_events_and_call_all_the_callback_passing_a_copy_of_the
         ),
     );
 
-    emitter.on(test.clone(), callback);
+    emitter.on(&test, callback);
 
-    emitter.on(test.clone(), second_callback);
+    emitter.on(&test, second_callback);
 
     let mut data: HashMap<String, String> = HashMap::new();
     data.insert(test.clone(), data_inside.clone());
-    emitter.emit(test.clone(), &mut data);
+    emitter.emit(&test, &mut data);
 }
 
 #[test]
@@ -83,12 +83,12 @@ fn must_unregister_an_event() {
         }),
     );
 
-    emitter.on(test.clone(), callback);
+    emitter.on(&test, callback);
 
     let mut data: HashMap<String, String> = HashMap::new();
     data.insert(test.clone(), data_inside.clone());
-    emitter.off(test.clone());
-    emitter.emit(test.clone(), &mut data);
+    emitter.off(&test);
+    emitter.emit(&test, &mut data);
 }
 
 #[test]
@@ -123,7 +123,7 @@ fn must_work_with_a_custom_event_data_and_allow_the_callback_to_modified_it() {
         }),
     );
 
-    emitter.on(test.clone(), callback);
+    emitter.on(&test, callback);
 
     let mut data: HashMap<String, Foo> = HashMap::new();
     data.insert(
@@ -132,7 +132,7 @@ fn must_work_with_a_custom_event_data_and_allow_the_callback_to_modified_it() {
             bar: data_inside.clone(),
         },
     );
-    emitter.emit(test.clone(), &mut data);
+    emitter.emit(&test, &mut data);
     match data.get(&"Result".to_string()) {
         Some(ref data) => {
             if data.bar != "HAHAHA".to_string() {
