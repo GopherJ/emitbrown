@@ -1,10 +1,10 @@
 [package]
 name = "emitbrown"
-version = "0.1.8"
+version = "0.1.9"
 authors = ["Cheng JIANG <cheng.jiang@outlook.fr>"]
 edition = "2018"
 description = "event emitter based on google swisstable"
 license = "MIT"
 
 [dependencies]
-hashbrown = "0.6.3"
+hashbrown = "0.7.1"
