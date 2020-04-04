@@ -39,15 +39,8 @@ where
     K: EventKey,
 {
     fn on(&mut self, event_name: K, callback: EventCallback<'callback, T>) {
-        if self.events.contains_key(&event_name) {
-            match self.events.get_mut(&event_name) {
-                Some(callbacks) => callbacks.push(callback),
-                None => (),
-            }
-        } else {
-            let vec = vec![callback];
-            self.events.insert(event_name, vec);
-        }
+        let callbacks = self.events.entry(event_name).or_insert(vec![]);
+        callbacks.push(callback);
     }
 
     fn off(&mut self, event_name: K) {
@@ -55,13 +48,10 @@ where
     }
 
     fn emit(&mut self, event_name: K, event_data: &mut T) {
-        match self.events.get_mut(&event_name) {
-            Some(callbacks) => {
-                for callback in callbacks.iter_mut() {
-                    callback(event_data);
-                }
+        if let Some(callbacks) = self.events.get_mut(&event_name) {
+            for callback in callbacks.iter_mut() {
+                callback(event_data)
             }
-            _ => {}
         }
     }
 }
